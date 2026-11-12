@@ -1,0 +1,12 @@
+{
+  "name": "antena-na-lama-backend",
+  "version": "1.0.0",
+  "description": "API de Alertas Climáticos e Abrigos da RMR (Recife) - Desafio Antena na Lama",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test"
+  }
+}
+
