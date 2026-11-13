@@ -1,199 +1,27 @@
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: #f1f5f9;
-  color: #0f172a;
-  line-height: 1.5;
-}
-
-/* Barra de comparação no topo */
-.barra-topo {
-  background: #1e1b4b;
-  color: #ffffff;
-  padding: 10px 16px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  border-bottom: 3px solid #facc15;
-}
-
-.titulo-barra {
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.botoes-barra {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.btn-topo {
-  background: #312e81;
-  color: #ffffff;
-  border: 1px solid #818cf8;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.btn-topo.ativo {
-  background: #facc15;
-  color: #1e1b4b;
-  border-color: #ffffff;
-  font-weight: 800;
-}
-
-/* Painel para copiar os prompts com 1 clique */
-.painel-prompts {
-  background: #0f172a;
-  color: #f8fafc;
-  padding: 16px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-
-.caixa-prompt {
-  background: #1e293b;
-  padding: 12px;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.caixa-prompt code {
-  background: #090d16;
-  padding: 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  color: #e2e8f0;
-}
-
-.caixa-prompt button {
-  background: #2563eb;
-  color: #ffffff;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* Container central simples e responsivo */
-.container-pagina {
-  max-width: 480px;
-  margin: 24px auto;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-/* Estilos Acessíveis do AlertaChuva.jsx */
-.card-acessivel {
-  padding: 20px;
-}
-
-.card-acessivel h1 {
-  font-size: 22px;
-  margin-top: 0;
-  color: #0f172a;
-}
-
-.box-risco {
-  background: #fef2f2;
-  border: 2px solid #b91c1c;
-  color: #7f1d1d;
-  padding: 16px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-.tag-risco {
-  font-weight: 800;
-  font-size: 15px;
-  margin: 8px 0;
-}
-
-.texto-simples {
-  font-size: 16px;
-  font-weight: 600;
-  color: #0f172a;
-  margin: 8px 0;
-}
-
-.texto-abrigo {
-  font-size: 14px;
-  background: #ffffff;
-  color: #0f172a;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #cbd5e1;
-  margin-bottom: 0;
-}
-
-.form-alerta {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.label-forte {
-  font-weight: 700;
-  font-size: 16px;
-  color: #0f172a;
-}
-
-.input-acessivel {
-  width: 100%;
-  min-height: 48px;
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #334155;
-  border-radius: 8px;
-  color: #0f172a;
-}
-
-.botao-acessivel {
-  width: 100%;
-  min-height: 48px;
-  margin-top: 8px;
-  background: #15803d;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 800;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.botao-acessivel:hover {
-  background: #166534;
-}
-
-/* Indicador de Foco por Teclado (Tab) super visível */
-:where(button, input):focus-visible {
-  outline: 3px solid #0b57d0;
-  outline-offset: 2px;
-}
-
-.msg-sucesso {
-  margin-top: 16px;
-  padding: 12px;
-  background: #f0fdf4;
-  border: 2px solid #15803d;
-  color: #14532d;
-  border-radius: 8px;
-  font-weight: 600;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+body { background: #f1f5f9; color: #0f172a; line-height: 1.45; }
+.container { max-width: 640px; margin: 0 auto; padding: 14px; }
+.topo { background: #0f172a; color: #fff; padding: 18px; border-radius: 12px; margin-bottom: 12px; }
+.topo h1 { font-size: 1.35rem; }
+.topo p { font-size: 0.85rem; color: #cbd5e1; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.tab { padding: 12px; border: 2px solid #cbd5e1; background: #fff; border-radius: 10px; font-weight: 700; cursor: pointer; }
+.tab.ativa { background: #1e3a8a; color: #fff; border-color: #1e3a8a; }
+.painel-card { background: #fff; padding: 16px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+.subtexto { font-size: 0.85rem; color: #475569; margin-bottom: 12px; }
+.campo-perfil { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.campo-perfil select { padding: 10px; border-radius: 8px; border: 1px solid #94a3b8; font-size: 0.95rem; }
+.grid-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn-sos { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 18px 10px; border: none; border-radius: 12px; color: #fff; font-weight: 700; font-size: 0.95rem; cursor: pointer; min-height: 96px; }
+.icone-sos { font-size: 1.8rem; }
+.status-box { margin-top: 16px; padding: 14px; border-radius: 10px; background: #fef2f2; border-left: 6px solid #dc2626; }
+.status-box.status-a_caminho { background: #f0fdf4; border-left-color: #16a34a; }
+.justificativa { font-size: 0.85rem; color: #334155; margin-top: 6px; }
+.equipe-caminho { margin-top: 8px; color: #166534; }
+.lista-chamados { display: flex; flex-direction: column; gap: 12px; margin: 12px 0; }
+.card-chamado { border: 1px solid #e2e8f0; border-left: 6px solid #dc2626; padding: 12px; border-radius: 8px; background: #fff; }
+.chamado-topo { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; }
+.btn-aceitar { margin-top: 10px; width: 100%; padding: 10px; background: #16a34a; color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+.box-calor { margin-top: 18px; padding: 14px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; }
+.box-calor h3 { color: #9a3412; font-size: 1rem; margin-bottom: 6px; }
+.box-calor ul { padding-left: 18px; font-size: 0.85rem; margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
