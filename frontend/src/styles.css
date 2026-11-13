@@ -4,7 +4,16 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    sans-serif;
   background-color: #f1f5f9;
   color: #0f172a;
   line-height: 1.5;
@@ -292,7 +301,9 @@ body {
   min-height: 48px;
 }
 
-.form-alerta, .form-resgate, .form-vulneravel {
+.form-alerta,
+.form-resgate,
+.form-vulneravel {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -310,7 +321,8 @@ body {
   color: #0f172a;
 }
 
-.input-acessivel, .select-acessivel {
+.input-acessivel,
+.select-acessivel {
   width: 100%;
   min-height: 48px;
   padding: 12px;
@@ -468,7 +480,8 @@ body {
   color: #7f1d1d;
 }
 
-.box-preview-ia.prioridade-média, .box-preview-ia.prioridade-media {
+.box-preview-ia.prioridade-média,
+.box-preview-ia.prioridade-media {
   background: #fffbeb;
   border-color: #d97706;
   color: #78350f;
@@ -487,7 +500,8 @@ body {
   color: #991b1b;
 }
 
-.prioridade-media, .prioridade-média {
+.prioridade-media,
+.prioridade-média {
   background: #fef3c7;
   color: #92400e;
 }
@@ -502,7 +516,8 @@ body {
   font-size: 15px;
 }
 
-.texto-recurso, .texto-justificativa {
+.texto-recurso,
+.texto-justificativa {
   margin: 4px 0;
   font-size: 14px;
 }
@@ -608,7 +623,9 @@ body {
   color: #0f172a;
 }
 
-.info-vitima, .info-recurso, .info-atendimento {
+.info-vitima,
+.info-recurso,
+.info-atendimento {
   margin: 2px 0;
   font-size: 14px;
 }
@@ -759,7 +776,8 @@ body {
   color: #166534;
 }
 
-.esfera-concessionária, .esfera-concessionaria {
+.esfera-concessionária,
+.esfera-concessionaria {
   background: #ffedd5;
   color: #9a3412;
 }
@@ -1144,4 +1162,174 @@ body {
 
 .telefones-uteis span strong {
   color: #facc15;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+body {
+  background: #f1f5f9;
+  color: #0f172a;
+  line-height: 1.45;
+}
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 14px;
+}
+.topo {
+  background: #0f172a;
+  color: #fff;
+  padding: 18px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+.topo h1 {
+  font-size: 1.35rem;
+}
+.topo p {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+}
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.tab {
+  padding: 12px;
+  border: 2px solid #cbd5e1;
+  background: #fff;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tab.ativa {
+  background: #1e3a8a;
+  color: #fff;
+  border-color: #1e3a8a;
+}
+.painel-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+.subtexto {
+  font-size: 0.85rem;
+  color: #475569;
+  margin-bottom: 12px;
+}
+.campo-perfil {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+.campo-perfil select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #94a3b8;
+  font-size: 0.95rem;
+}
+.grid-botoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.btn-sos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 18px 10px;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  min-height: 96px;
+}
+.icone-sos {
+  font-size: 1.8rem;
+}
+.status-box {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #fef2f2;
+  border-left: 6px solid #dc2626;
+}
+.status-box.status-a_caminho {
+  background: #f0fdf4;
+  border-left-color: #16a34a;
+}
+.justificativa {
+  font-size: 0.85rem;
+  color: #334155;
+  margin-top: 6px;
+}
+.equipe-caminho {
+  margin-top: 8px;
+  color: #166534;
+}
+.lista-chamados {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 12px 0;
+}
+.card-chamado {
+  border: 1px solid #e2e8f0;
+  border-left: 6px solid #dc2626;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+}
+.chamado-topo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.btn-aceitar {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.box-calor {
+  margin-top: 18px;
+  padding: 14px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+}
+.box-calor h3 {
+  color: #9a3412;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+.box-calor ul {
+  padding-left: 18px;
+  font-size: 0.85rem;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }

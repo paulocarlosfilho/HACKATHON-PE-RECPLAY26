@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { AlertaChuva } from './AlertaChuva.jsx';
 import { AlertaChuvaRuim } from './AlertaChuvaRuim.jsx';
 import { CentralResgate } from './CentralResgate.jsx';
 import { InstituicoesFrota } from './InstituicoesFrota.jsx';
 import { RedeVulneraveis } from './RedeVulneraveis.jsx';
 import { PainelClimaRMR } from './PainelClimaRMR.jsx';
+=======
+import { io } from 'socket.io-client';
+import PainelCidadao from './components/PainelCidadao';
+import PainelInstitucional from './components/PainelInstitucional';
+import './styles.css';
+>>>>>>> ad37457469eac9c2ed94c361a4496fbd16612845
 
-export const PROMPT_1_RUIM = `Crie um componente React chamado AlertaChuvaRuim de alerta de chuva para o Recife. Use termos bem técnicos de meteorologia, letra pequena cinza-claro (#94a3b8) no fundo branco, uma imagem sem alt, um input só com placeholder (sem label) e uma div clicável amarela (#fde047) com texto branco escrita "Submit Data".`;
-
-export const PROMPT_2_BOM = `Esse componente tem problemas sérios de acessibilidade para moradores do Recife usando celular na chuva. Corrija gerando o componente AlertaChuva:
-1. Troque o texto técnico por linguagem simples dizendo o que fazer e qual abrigo procurar (Escola Municipal no Ibura + telefone 199).
-2. Use alto contraste nas cores (WCAG AA >= 4.5:1).
-3. Coloque atributo alt descritivo na imagem.
-4. Adicione um <label htmlFor="campo-bairro"> conectado ao <input id="campo-bairro">.
-5. Troque a <div onClick> por um <button type="submit"> nativo com altura de 48px para celular e foco de teclado visível.`;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export default function App() {
+<<<<<<< HEAD
   const [modoComparativo, setModoComparativo] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.get('modo') === 'ruim' ? 'ruim' : 'acessivel';
@@ -53,14 +54,59 @@ export default function App() {
     params.set('aba', novaAba);
     window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
   }
+=======
+  const [aba, setAba] = useState('cidadao');
+  const [chamados, setChamados] = useState([]);
+  const [chamadoAtivo, setChamadoAtivo] = useState(null);
+  const [calor, setCalor] = useState(null);
 
-  function copiar(texto, id) {
-    navigator.clipboard?.writeText(texto);
-    setCopiado(id);
-    setTimeout(() => setCopiado(''), 2000);
+  useEffect(() => {
+    async function inicializar() {
+      try {
+        const [respChamados, respCalor] = await Promise.all([
+          fetch(`${API_URL}/api/chamados`),
+          fetch(`${API_URL}/api/calor-extremo?temp=35.0`)
+        ]);
+        if (respChamados.ok && respCalor.ok) {
+          setChamados(await respChamados.json());
+          setCalor(await respCalor.json());
+          return;
+        }
+        throw new Error('Fallback');
+      } catch (_) {
+        const fb = await fetch('/alerta.json').then((r) => r.json());
+        setChamados(fb.chamados);
+        setCalor(fb.calor);
+      }
+    }
+>>>>>>> ad37457469eac9c2ed94c361a4496fbd16612845
+
+    inicializar();
+
+    const socket = io(API_URL, { transports: ['websocket', 'polling'] });
+    socket.on('novo_chamado', (novo) => {
+      setChamados((prev) => [novo, ...prev.filter((c) => c.id !== novo.id)]);
+    });
+    socket.on('chamado_atualizado', (atualizado) => {
+      setChamados((prev) => prev.map((c) => (c.id === atualizado.id ? { ...c, ...atualizado } : c)));
+      setChamadoAtivo((prev) => (prev && prev.id === atualizado.id ? { ...prev, ...atualizado } : prev));
+    });
+
+    return () => socket.disconnect();
+  }, []);
+
+  function handleNovoChamado(novo) {
+    setChamadoAtivo(novo);
+    setChamados((prev) => [novo, ...prev.filter((c) => c.id !== novo.id)]);
+  }
+
+  function handleAceitarChamado(atualizado) {
+    setChamados((prev) => prev.map((c) => (c.id === atualizado.id ? { ...c, ...atualizado } : c)));
+    setChamadoAtivo((prev) => (prev && prev.id === atualizado.id ? { ...prev, ...atualizado } : prev));
   }
 
   return (
+<<<<<<< HEAD
     <div className="app-layout">
       {/* Barra superior de status e comparação de IA */}
       <nav className="barra-topo" aria-label="Controles da aplicação e modo de IA">
@@ -272,5 +318,43 @@ export default function App() {
         </div>
       </footer>
     </div>
+=======
+    <main className="container">
+      <header className="topo">
+        <h1>Antena na Lama • Resgate RMR</h1>
+        <p>Triagem por IA & Despacho Descentralizado em Tempo Real</p>
+      </header>
+
+      <nav className="tabs" aria-label="Alternar visão do sistema">
+        <button
+          className={aba === 'cidadao' ? 'tab ativa' : 'tab'}
+          onClick={() => setAba('cidadao')}
+        >
+          📱 Visão Cidadão (SOS)
+        </button>
+        <button
+          className={aba === 'instituicao' ? 'tab ativa' : 'tab'}
+          onClick={() => setAba('instituicao')}
+        >
+          🏛️ Visão Instituições ({chamados.filter((c) => c.status === 'Pendente').length})
+        </button>
+      </nav>
+
+      {aba === 'cidadao' ? (
+        <PainelCidadao
+          apiUrl={API_URL}
+          chamadoAtivo={chamadoAtivo}
+          onNovoChamado={handleNovoChamado}
+        />
+      ) : (
+        <PainelInstitucional
+          apiUrl={API_URL}
+          chamados={chamados}
+          calor={calor}
+          onAceitarChamado={handleAceitarChamado}
+        />
+      )}
+    </main>
+>>>>>>> ad37457469eac9c2ed94c361a4496fbd16612845
   );
 }
