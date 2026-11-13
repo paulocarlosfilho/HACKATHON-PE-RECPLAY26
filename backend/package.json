@@ -1,12 +1,22 @@
 {
-  "name": "antena-na-lama-backend",
-  "version": "1.0.0",
-  "description": "API de Alertas Climáticos e Abrigos da RMR (Recife) - Desafio Antena na Lama",
+  "name": "plataforma-resgate-descentralizado-backend",
+  "version": "2.0.0",
+  "description": "API REST + WebSockets com Triagem por IA para Despacho Descentralizado na RMR",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
-    "test": "node --test"
+    "test": "jest --runInBand --forceExit"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "helmet": "^8.0.0",
+    "pg": "^8.13.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }
-

@@ -1,103 +1,132 @@
-# 🏆 Alerta RMR · Antena na Lama — Kit Prático (Frontend & Mobile com IA)
+# Antena na Lama — Plataforma de Resgate Descentralizado (RMR)
 
-> **Desafio:** Antena na Lama (Hackathon APONTI Academy · Devs Criam com IA)  
-> **Caminho escolhido:** Alertar e proteger (durante a crise) + Mobilizar e recuperar
-
----
-
-## 📌 Repositório Template Oficial vs. Este Repositório Base
-
-Este repositório é uma **versão com exemplo prático, testes automatizados e guias de bolso** baseada no template oficial do Hackathon:
-
-* 🔗 **Repositório Template Oficial da APONTI (em branco para iniciar do zero):**  
-  👉 **[https://github.com/apontiacademy/HACKATHON-PE-RECPLAY26](https://github.com/apontiacademy/HACKATHON-PE-RECPLAY26)**
-* 🛠️ **Este Repositório (`alisonmelo/HACKATHON-PE-RECPLAY26`):**  
-  Contém a estrutura oficial + um exemplo completo de **Frontend React Acessível (`AlertaChuva.jsx`)**, comparativo de **Antes x Depois da IA**, **3 Testes Automatizados (Smoke + Acessibilidade)** já configurados no GitHub Actions (CI) e a pasta **`/guias`** com passo a passo de Acessibilidade, Testes, Deploy na Vercel e Telas Leves para 3G.
+> **Rede descentralizada de resposta a emergências climáticas com triagem automatizada por IA e despacho simultâneo para múltiplas instituições na Região Metropolitana do Recife (RMR).**
 
 ---
 
-## 📖 Sobre o Projeto de Exemplo
-**Alerta RMR · Antena na Lama** é uma aplicação web mobile-first e acessível que traduz boletins meteorológicos técnicos (APAC, CEMADEN e Defesa Civil do Recife) para **linguagem simples e acionável** para moradores das áreas de morro, encostas e alagamentos da Região Metropolitana do Recife (como Ibura, Ilha Joana Bezerra e Jardim Monte Verde).
+## 1. Visão Geral do Problema e da Solução
 
-O projeto demonstra na prática como resolver dois gargalos críticos do desafio:
-1. **Linguagem e Acessibilidade:** Transforma alertas técnicos difíceis de ler em avisos claros com alto contraste (WCAG AA), textos alternativos (`alt`), campos com `<label>` e navegação por teclado/toque (`48px`).
-2. **Conexão Fraca / Offline:** Tela super leve (`< 50 KB`), sem bibliotecas pesadas e com fallback local caso o sinal 3G caia durante a chuva.
+Em desastres climáticos severos na RMR (alagamentos, deslizamentos de barreiras e ondas de calor extremo), depender de uma única central telefônica (como o 199) cria um gargalo crítico[cite: 4]. As linhas congestionam e os centros de comando enfrentam dificuldades para triar simultaneamente milhares de pedidos[cite: 4].
 
----
+A **Plataforma de Resgate Descentralizado** resolve esse problema em duas frentes[cite: 4]:
 
-## 📚 Guias de Bolso para as Equipes (Pasta `/guias`)
-Consulte os guias rápidos criados especialmente para ajudar sua equipe a garantir os pontos de **Qualidade Técnica**, **Acessibilidade**, **Testes** e **Deploy**:
-
-1. ♿ **[01 - Checklist de Acessibilidade Básica (5 Pontos + Lighthouse)](./guias/01-checklist-acessibilidade.md)**
-2. 🧪 **[02 - Exemplo de Teste Automatizado (Vitest / Jest + Testing Library)](./guias/02-exemplo-teste-jest-testing-library.md)**
-3. 🚀 **[03 - Guia Passo a Passo de Deploy na Vercel](./guias/03-guia-deploy-vercel.md)**
-4. 📱 **[04 - Dicas para Telas Leves no Celular e com Internet Fraca (3G)](./guias/04-dicas-telas-leves-celular-internet-fraca.md)**
+1. **Resposta Reativa (Zero Digitação — 1 Clique):** O cidadão aciona o socorro pelo celular com um toque[cite: 4]. A IA no backend cruza o tipo de ocorrência com o perfil de vulnerabilidade pré-cadastrado (idade e condição de saúde), classifica a severidade e despacha o alerta em tempo real via WebSockets para a **"Fila Vermelha"** de múltiplas instituições (Corpo de Bombeiros, Defesa Civil, ONGs certificadas e concessionárias)[cite: 4, 5].
+2. **Rede Proativa (Ondas de Calor Extremo):** O sistema monitora a temperatura da RMR e, ao detectar exposição crítica (>= 33°C), cruza os dados meteorológicos com moradores vulneráveis que aceitaram participar da rede (idosos, cadeirantes, gestantes), organizando visitas domiciliares de hidratação e encaminhamento para pontos de acolhimento[cite: 5, 7].
 
 ---
 
-## 👥 Equipe (Modelo para preencher no README da sua equipe)
-*   **Desenvolvedores:**
-    *   [Nome 1] - Front-end & Acessibilidade
-    *   [Nome 2] - Back-end & Integração de Dados
-    *   [Nome 3] - Dados / DevOps & CI/CD
-    *   [Nome 4] - Mobile / UX & Testes Automatizados
-*   **Validador(a) (Movimento Pró-Criança):**
-    *   [Nome do(a) Jovem Validador(a)]
+## 2. Arquitetura Modular do Sistema
+
+O projeto adota uma arquitetura desacoplada orientada a eventos em tempo real, com tolerância a falhas e contingência offline:
+
+    [ Dispositivo Cidadão (Mobile Web App) ] <──(WebSockets / REST)──> [ API Central Node.js + Express + Socket.io ]
+    [ Painel Institucional (Centro de Comando) ]                                  │
+                                                                     ┌────────────┴────────────┐
+                                                                     ▼                         ▼
+                                                          [ Motor de Triagem IA ]   [ Repositório Híbrido ]
+                                                          (LLM + Regras Fallback)   (PostgreSQL + Seed RMR)
+
+### Estrutura de Pastas do Repositório
+
+    HACKATHON-PE-RECPLAY26/
+    ├── .github/
+    │   └── workflows/          # Esteira CI/CD e DevSecOps
+    ├── backend/
+    │   ├── src/
+    │   │   ├── db/             # Schema PostgreSQL e camada de dados híbrida
+    │   │   ├── routes/         # Endpoints REST e eventos Socket.io
+    │   │   └── services/       # Triagem por IA e monitoramento de onda de calor
+    │   └── tests/              # Testes automatizados da API (Jest + Supertest)
+    ├── frontend/
+    │   ├── public/             # Contingência estática offline (alerta.json)
+    │   └── src/
+    │       ├── components/     # Visão Cidadão (SOS) e Visão Instituições
+    │       └── tests/          # Testes automatizados de interface (Vitest)
+    └── README.md               # Documentação técnica, validação e auditoria de IA
 
 ---
 
-## 🚀 Tecnologias Utilizadas
-*   **Front-end:** React 18, Vite, CSS Mobile-First Acessível (Nota 100 em Acessibilidade no Lighthouse)
-*   **Back-end:** Node.js (API REST `/api/alertas` e `/api/ajuda`) + exemplo em Python
-*   **Dados Abertos / Referência:** APAC, CEMADEN e Dados Abertos da Prefeitura do Recife (Pontos de apoio e alertas por bairro)
-*   **Deploy:** Vercel (Front-end) / Render (Back-end)
-*   **Testes Automatizados:** Vitest + React Testing Library (Front-end) e Node Test Runner (Back-end)
+## 3. Modelagem de Dados (PostgreSQL)
+
+O banco relacional (`backend/src/db/schema.sql`) garante a integridade entre vítimas, órgãos de resposta e frotas[cite: 5]:
+
+| Tabela | Principais Campos | Finalidade |
+| :--- | :--- | :--- |
+| **usuarios** | `id`, `nome`, `idade`, `condicao_saude`, `lat`, `lng`, `aceitou_rede_protecao` | Perfil pré-cadastrado do cidadão para triagem prioritária e monitoramento de calor[cite: 5, 7]. |
+| **instituicoes** | `id`, `nome`, `tipo_esfera`, `lat`, `lng` | Órgãos oficiais, concessionárias e ONGs certificadas habilitadas para despacho[cite: 4, 5]. |
+| **veiculos_recursos** | `id`, `instituicao_id`, `tipo`, `disponivel` | Frota operacional (Barco Salva-Vidas, Helicóptero, Jipe 4x4, Van Adaptada, Caminhão Elétrico)[cite: 4, 6]. |
+| **chamados** | `id`, `usuario_id`, `instituicao_id`, `tipo_problema`, `prioridade`, `recurso_sugerido`, `status` | Registro oficial da ocorrência (`Pendente` -> `A_Caminho` -> `Resgatado`)[cite: 6]. |
+
+*Nota: Caso a variável `DATABASE_URL` não esteja configurada, o `store.js` opera automaticamente com persistência em memória pré-populada com dados reais da RMR, garantindo continuidade operacional.*
 
 ---
 
-## 🤖 Uso Ético de IA (Modelo exigido pelo Edital)
-*Exemplo de preenchimento obrigatório demonstrando onde a IA foi usada e o que a equipe humana auditou e corrigiu:*
+## 4. Onde e Como a Inteligência Artificial é Utilizada
 
-*   **Onde a IA foi usada:** Geração inicial do componente de alerta meteorológico e formulário de cadastro por bairro/CEP.
-*   **O que foi corrigido/validado pela equipe humana:**
-    1. **Linguagem Simples:** A IA gerou jargões técnicos (*"Precipitação pluviométrica > 85mm com saturação pedológica"*). Reescrevemos para linguagem direta (*"Chuva muito forte! Procure a Escola Municipal Poeta Jonatas Braga ou ligue 199"*).
-    2. **Contraste e Visibilidade no Celular:** A IA usou texto cinza claro (`#94a3b8`) sobre fundo branco e botão amarelo com letra branca (reprovado no Lighthouse). Ajustamos todas as cores para contraste superior a `4.5:1` (WCAG AA) e adicionamos ícones junto às cores.
-    3. **Acessibilidade de Formulário e Teclado:** A IA criou inputs apenas com `placeholder` (sem `<label>`) e usou `<div onClick>` no lugar de botão. Substituímos por `<label htmlFor="campo-bairro">`, `<button type="submit">` nativo com área de toque mínima de `48px` e indicador `:focus-visible` para teclado.
-    4. **Texto Alternativo (`alt`):** Adicionamos descrições `alt` nas imagens de risco.
-*   **Ferramentas usadas:** ChatGPT / Gemini / GitHub Copilot + Auditoria com Google Lighthouse e React Testing Library.
+### A. Na Arquitetura do Produto (`backend/src/services/triagemIAService.js`)
+A IA atua no núcleo de decisão do backend no momento em que um chamado é aberto[cite: 4]:
+
+- **Entrada:** Tipo de ocorrência acionada pelo cidadão + perfil da vítima (`idade` e `condicao_saude`)[cite: 4, 5].
+- **Processamento:** Integração via API de LLM (`gpt-4o-mini` com saída estruturada em JSON) apoiada por um motor determinístico de contingência caso a API externa sofra latência ou queda de rede[cite: 5].
+- **Saída:** Define automaticamente a **prioridade** (`Alta` / Fila Vermelha, `Média` ou `Baixa`), recomenda o **recurso_sugerido** adequado ao cenário (ex.: *Barco Salva-Vidas* para alagamento com mobilidade reduzida; *Jipe 4x4* ou *Helicóptero* para deslizamento de barreira) e gera uma **justificativa_ia** objetiva para o operador do centro de comando[cite: 4, 6].
+
+### B. Transparência e Auditoria do Uso de IA no Desenvolvimento
+Em conformidade com as diretrizes de transparência do hackathon, ferramentas de IA generativa foram utilizadas como **copiloto de engenharia**, sob revisão, refatoração e validação integral da equipe:
+
+- **Arquitetura e Scaffolding:** Apoio na estruturação modular do servidor híbrido Express + Socket.io, modelagem DDL PostgreSQL e organização dos componentes React.
+- **Revisão de Segurança e DevSecOps:** Auxílio na configuração de *Dockerfiles* multi-stage com execução não-privilegiada (`USER node` e `nginx-unprivileged`), sanitização de entradas e criação de mocks para testes automatizados.
+- **Validação Humana:** Toda regra de negócio de triagem, limites meteorológicos (33°C para onda de calor), fluxos de contingência offline e suítes de testes foram auditados, ajustados e validados localmente e em contêiner pela equipe.
 
 ---
 
-## 🛠️ Como rodar o projeto localmente
+## 5. Como Executar, Testar e Validar Localmente
 
 ### Pré-requisitos
-*   Node.js 18+
+- **Node.js** v20+ e **npm**
+- **Docker** (opcional, para validação de contêineres)
 
-### 1. Rodar o Front-end (React + Vite)
-```bash
-cd frontend
-npm install
-npm run dev
-# Abra no navegador: http://localhost:5173
-```
-> 💡 **Dica:** Na barra superior do projeto você pode alternar entre **`?modo=ruim`** (código gerado por prompt vago de IA, nota 72 no Lighthouse) e **`?modo=acessivel`** (código revisado e acessível, nota **100** no Lighthouse).
+### Passo 1: Subir e Testar o Backend
 
-### 2. Rodar os Testes Automatizados (Front-end)
-```bash
-cd frontend
-npm test
-```
+    cd backend
+    npm install
+    npm test      # Executa os 5 testes automatizados (Jest + Supertest)
+    npm start     # Inicia a API REST + WebSockets na porta 3001
 
-### 3. Rodar o Back-end (Opcional)
-```bash
-cd backend
-npm install
-npm run dev
-# API disponível em http://localhost:3001/api/alertas
-```
+### Passo 2: Subir e Testar o Frontend
+Em um novo terminal:
+
+    cd frontend
+    npm install
+    npm test      # Executa os testes de interface (Vitest + React Testing Library)
+    npm run dev   # Inicia o Web App na porta 5173
+
+### Passo 3: Roteiro de Validação End-to-End (E2E)
+1. **Disparo SOS (Visão Cidadão):** Acesse `http://localhost:5173`, selecione o perfil *"Dona Maria Clarice (78 anos • Mobilidade reduzida)"* e clique em **Deslizamento de Barreira**. Verifique a classificação automática como **Prioridade Alta** e sugestão de **Helicóptero Resgate / Jipe 4x4**[cite: 4, 6].
+2. **Despacho em Tempo Real (Visão Instituições):** Alterne para a aba **Visão Instituições**, localize o chamado na **Fila Vermelha** e clique em **Assumir Ocorrência e Despachar Frota**[cite: 4, 5].
+3. **Confirmação ao Cidadão:** Retorne à aba **Visão Cidadão** e confirme a atualização instantânea via WebSocket para o status **A Caminho** com a identificação do órgão responsável[cite: 4, 5].
+4. **Monitoramento de Onda de Calor:** Na **Visão Instituições**, verifique o painel **Rede Proativa — Onda de Calor**, listando os cidadãos vulneráveis da RMR elegíveis para visita de hidratação[cite: 7].
+5. **Contingência Offline:** Interrompa o processo do backend (`Ctrl + C`) e recarregue o navegador (`F5`). O sistema deve carregar automaticamente os dados de contingência a partir de `frontend/public/alerta.json`.
+
+### Passo 4: Validação via Contêineres Docker
+
+    # Build e verificação de saúde do Backend
+    docker build -t antena-backend:local ./backend
+    docker run -d --name api-check -p 3001:3001 antena-backend:local
+    curl http://localhost:3001/health
+    docker rm -f api-check
+
+    # Build do Frontend (Nginx Non-Root)
+    docker build -t antena-frontend:local ./frontend
 
 ---
 
-## 🌐 Deploy Público (Para preencher na entrega)
-*   **Link do Front-end (Vercel):** [Cole aqui o link da Vercel após o deploy]
-*   **Link da API Back-end (Render):** [Cole aqui o link do Render após o deploy]
+## 6. Principais Endpoints da API
+
+| Método | Rota | Descrição |
+| :--- | :--- | :--- |
+| `GET` | `/health` | Verifica disponibilidade e status operacional da API. |
+| `GET` | `/api/instituicoes` | Lista instituições cadastradas e disponibilidade de frotas. |
+| `GET` | `/api/chamados` | Retorna o histórico e a fila ativa de ocorrências. |
+| `POST` | `/api/chamados` | Registra novo pedido SOS, executa triagem por IA e emite evento `novo_chamado` via Socket.io. |
+| `PATCH` | `/api/chamados/:id/aceitar` | Vincula uma instituição ao chamado (`status: A_Caminho`) e notifica via Socket.io[cite: 5, 6]. |
+| `GET` | `/api/calor-extremo` | Consulta temperatura da RMR e retorna lista de vulneráveis para assistência preventiva[cite: 7]. |
