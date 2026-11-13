@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
+import { io } from 'socket.io-client';
 import { AlertaChuva } from './AlertaChuva.jsx';
 import { AlertaChuvaRuim } from './AlertaChuvaRuim.jsx';
 import { CentralResgate } from './CentralResgate.jsx';
 import { InstituicoesFrota } from './InstituicoesFrota.jsx';
 import { RedeVulneraveis } from './RedeVulneraveis.jsx';
 import { PainelClimaRMR } from './PainelClimaRMR.jsx';
-=======
-import { io } from 'socket.io-client';
 import PainelCidadao from './components/PainelCidadao';
 import PainelInstitucional from './components/PainelInstitucional';
 import './styles.css';
->>>>>>> ad37457469eac9c2ed94c361a4496fbd16612845
+
+export const PROMPT_1_RUIM = `Crie um componente React chamado AlertaChuvaRuim de alerta de chuva para o Recife. Use termos bem técnicos de meteorologia, letra pequena cinza-claro (#94a3b8) no fundo branco, uma imagem sem alt, um input só com placeholder (sem label) e uma div clicável amarela (#fde047) com texto branco escrita "Submit Data".`;
+
+export const PROMPT_2_BOM = `Esse componente tem problemas sérios de acessibilidade para moradores do Recife usando celular na chuva. Corrija gerando o componente AlertaChuva:
+1. Troque o texto técnico por linguagem simples dizendo o que fazer e qual abrigo procurar (Escola Municipal no Ibura + telefone 199).
+2. Use alto contraste nas cores (WCAG AA >= 4.5:1).
+3. Coloque atributo alt descritivo na imagem.
+4. Adicione um <label htmlFor="campo-bairro"> conectado ao <input id="campo-bairro">.
+5. Troque a <div onClick> por um <button type="submit"> nativo com altura de 48px para celular e foco de teclado visível.`;
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export default function App() {
-<<<<<<< HEAD
   const [modoComparativo, setModoComparativo] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.get('modo') === 'ruim' ? 'ruim' : 'acessivel';
@@ -31,7 +36,12 @@ export default function App() {
   const [copiado, setCopiado] = useState('');
   const [modoOffline, setModoOffline] = useState(false);
 
-  // Testa conectividade com a API do backend
+  // Estados dos painéis Cidadão e Institucional
+  const [chamados, setChamados] = useState([]);
+  const [chamadoAtivo, setChamadoAtivo] = useState(null);
+  const [calor, setCalor] = useState(null);
+
+  // Inicialização de conectividade e dados
   useEffect(() => {
     fetch('/health')
       .then((res) => {
@@ -39,6 +49,45 @@ export default function App() {
         else setModoOffline(false);
       })
       .catch(() => setModoOffline(true));
+
+    async function carregarDadosInstitucionais() {
+      try {
+        const [respChamados, respCalor] = await Promise.all([
+          fetch(`${API_URL}/api/chamados`),
+          fetch(`${API_URL}/api/calor-extremo?temp=35.0`)
+        ]);
+        if (respChamados.ok && respCalor.ok) {
+          setChamados(await respChamados.json());
+          setCalor(await respCalor.json());
+          return;
+        }
+        throw new Error('Fallback');
+      } catch (_) {
+        try {
+          const fb = await fetch('/alerta.json').then((r) => r.json());
+          if (fb.chamados) setChamados(fb.chamados);
+          if (fb.calor) setCalor(fb.calor);
+        } catch (e) {}
+      }
+    }
+
+    carregarDadosInstitucionais();
+
+    let socket;
+    try {
+      socket = io(API_URL, { transports: ['websocket', 'polling'] });
+      socket.on('novo_chamado', (novo) => {
+        setChamados((prev) => [novo, ...prev.filter((c) => c.id !== novo.id)]);
+      });
+      socket.on('chamado_atualizado', (atualizado) => {
+        setChamados((prev) => prev.map((c) => (c.id === atualizado.id ? { ...c, ...atualizado } : c)));
+        setChamadoAtivo((prev) => (prev && prev.id === atualizado.id ? { ...prev, ...atualizado } : prev));
+      });
+    } catch (_) {}
+
+    return () => {
+      if (socket) socket.disconnect();
+    };
   }, []);
 
   function trocarModoComparativo(novoModo) {
@@ -54,46 +103,12 @@ export default function App() {
     params.set('aba', novaAba);
     window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
   }
-=======
-  const [aba, setAba] = useState('cidadao');
-  const [chamados, setChamados] = useState([]);
-  const [chamadoAtivo, setChamadoAtivo] = useState(null);
-  const [calor, setCalor] = useState(null);
 
-  useEffect(() => {
-    async function inicializar() {
-      try {
-        const [respChamados, respCalor] = await Promise.all([
-          fetch(`${API_URL}/api/chamados`),
-          fetch(`${API_URL}/api/calor-extremo?temp=35.0`)
-        ]);
-        if (respChamados.ok && respCalor.ok) {
-          setChamados(await respChamados.json());
-          setCalor(await respCalor.json());
-          return;
-        }
-        throw new Error('Fallback');
-      } catch (_) {
-        const fb = await fetch('/alerta.json').then((r) => r.json());
-        setChamados(fb.chamados);
-        setCalor(fb.calor);
-      }
-    }
->>>>>>> ad37457469eac9c2ed94c361a4496fbd16612845
-
-    inicializar();
-
-    const socket = io(API_URL, { transports: ['websocket', 'polling'] });
-    socket.on('novo_chamado', (novo) => {
-      setChamados((prev) => [novo, ...prev.filter((c) => c.id !== novo.id)]);
-    });
-    socket.on('chamado_atualizado', (atualizado) => {
-      setChamados((prev) => prev.map((c) => (c.id === atualizado.id ? { ...c, ...atualizado } : c)));
-      setChamadoAtivo((prev) => (prev && prev.id === atualizado.id ? { ...prev, ...atualizado } : prev));
-    });
-
-    return () => socket.disconnect();
-  }, []);
+  function copiar(texto, id) {
+    navigator.clipboard?.writeText(texto);
+    setCopiado(id);
+    setTimeout(() => setCopiado(''), 2000);
+  }
 
   function handleNovoChamado(novo) {
     setChamadoAtivo(novo);
@@ -106,12 +121,11 @@ export default function App() {
   }
 
   return (
-<<<<<<< HEAD
     <div className="app-layout">
       {/* Barra superior de status e comparação de IA */}
       <nav className="barra-topo" aria-label="Controles da aplicação e modo de IA">
         <div className="lado-esquerdo-topo">
-          <span className="titulo-barra">🌧️ Alerta RMR · Antena na Lama</span>
+          <span className="titulo-barra">🌧️ Alerta RMR · Antena na Lama • Resgate RMR</span>
           <span className={`badge-conexao ${modoOffline ? 'conexao-offline' : 'conexao-online'}`}>
             {modoOffline ? '⚠️ Modo Contingência (Offline / 3G)' : '🟢 Backend Online'}
           </span>
@@ -238,6 +252,30 @@ export default function App() {
               >
                 🌤️ Telemetria & Marés
               </button>
+
+              <button
+                type="button"
+                role="tab"
+                id="tab-cidadao"
+                aria-selected={abaAtiva === 'cidadao'}
+                aria-controls="panel-cidadao"
+                className={`btn-aba ${abaAtiva === 'cidadao' ? 'ativa' : ''}`}
+                onClick={() => trocarAba('cidadao')}
+              >
+                📱 Visão Cidadão
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                id="tab-instituicao"
+                aria-selected={abaAtiva === 'instituicao'}
+                aria-controls="panel-instituicao"
+                className={`btn-aba ${abaAtiva === 'instituicao' ? 'ativa' : ''}`}
+                onClick={() => trocarAba('instituicao')}
+              >
+                🏛️ Visão Instituições
+              </button>
             </nav>
           </header>
 
@@ -299,6 +337,37 @@ export default function App() {
                 <PainelClimaRMR />
               </div>
             )}
+
+            {abaAtiva === 'cidadao' && (
+              <div
+                id="panel-cidadao"
+                role="tabpanel"
+                aria-labelledby="tab-cidadao"
+                className="painel-aba-conteudo"
+              >
+                <PainelCidadao
+                  apiUrl={API_URL}
+                  chamadoAtivo={chamadoAtivo}
+                  onNovoChamado={handleNovoChamado}
+                />
+              </div>
+            )}
+
+            {abaAtiva === 'instituicao' && (
+              <div
+                id="panel-instituicao"
+                role="tabpanel"
+                aria-labelledby="tab-instituicao"
+                className="painel-aba-conteudo"
+              >
+                <PainelInstitucional
+                  apiUrl={API_URL}
+                  chamados={chamados}
+                  calor={calor}
+                  onAceitarChamado={handleAceitarChamado}
+                />
+              </div>
+            )}
           </main>
         </>
       )}
@@ -318,43 +387,5 @@ export default function App() {
         </div>
       </footer>
     </div>
-=======
-    <main className="container">
-      <header className="topo">
-        <h1>Antena na Lama • Resgate RMR</h1>
-        <p>Triagem por IA & Despacho Descentralizado em Tempo Real</p>
-      </header>
-
-      <nav className="tabs" aria-label="Alternar visão do sistema">
-        <button
-          className={aba === 'cidadao' ? 'tab ativa' : 'tab'}
-          onClick={() => setAba('cidadao')}
-        >
-          📱 Visão Cidadão (SOS)
-        </button>
-        <button
-          className={aba === 'instituicao' ? 'tab ativa' : 'tab'}
-          onClick={() => setAba('instituicao')}
-        >
-          🏛️ Visão Instituições ({chamados.filter((c) => c.status === 'Pendente').length})
-        </button>
-      </nav>
-
-      {aba === 'cidadao' ? (
-        <PainelCidadao
-          apiUrl={API_URL}
-          chamadoAtivo={chamadoAtivo}
-          onNovoChamado={handleNovoChamado}
-        />
-      ) : (
-        <PainelInstitucional
-          apiUrl={API_URL}
-          chamados={chamados}
-          calor={calor}
-          onAceitarChamado={handleAceitarChamado}
-        />
-      )}
-    </main>
->>>>>>> ad37457469eac9c2ed94c361a4496fbd16612845
   );
 }
