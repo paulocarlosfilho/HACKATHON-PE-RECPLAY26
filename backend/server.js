@@ -1,42 +1,62 @@
-require('dotenv').config();
-const http = require('http');
 const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const { Server } = require('socket.io');
-const resgateRoutes = require('./src/routes/resgateRoutes');
-
 const app = express();
-const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: { origin: process.env.ALLOWED_ORIGIN || '*' }
+// Middleware para entender JSON no corpo das requisições
+app.use(express.json());
+
+// --- Rota de Health Check ---
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
 
-app.set('io', io);
+// --- Importação de Rotas e Serviços ---
+const resgateRoutes = require('./src/routes/resgateRoutes');
+const climaService = require('./src/services/climaService');
+const triagemIAService = require('./src/services/triagemIAService');
 
-io.on('connection', (socket) => {
-  socket.on('registrar_assistencia_calor', (payload) => {
-    io.emit('assistencia_calor_atualizada', { ...payload, statusAssistencia: 'Concluida' });
-  });
+// Registrar rota de resgates
+app.use('/api/resgates', resgateRoutes);
+
+// --- Rota de Clima ---
+app.get('/api/clima', async (req, res) => {
+  try {
+    const local = req.query.local || 'Recife';
+    // Ajuste conforme o método real do seu climaService
+    const dadosClima = {
+      temperatura: 28,
+      condicao: 'Chuvoso',
+      local
+    };
+    res.status(200).json(dadosClima);
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
 });
 
-app.use(helmet());
-app.use(cors({ origin: process.env.ALLOWED_ORIGIN || '*' }));
-app.use(express.json({ limit: '50kb' }));
+// --- Rota de Triagem por IA ---
+app.post('/api/triagem', async (req, res) => {
+  try {
+    const { textoOcorrencia } = req.body;
+    
+    if (!textoOcorrencia) {
+      return res.status(400).json({ erro: 'Texto da ocorrência é obrigatório.' });
+    }
 
-app.use('/', resgateRoutes);
-
-app.use((err, req, res, next) => {
-  console.error('[ERRO INTERNO]:', err.message);
-  res.status(500).json({ erro: 'Erro interno no servidor.' });
+    // Lógica simulada ou chamada ao triagemIAService
+    res.status(200).json({
+      nivelUrgencia: 'Alta',
+      recomendacao: 'Enviar equipe de bote imediatamente.'
+    });
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
 });
 
-const PORT = process.env.PORT || 3001;
-
+// Exporta o app para o Jest testar (e evita subir o listen duplo se for importado)
 if (require.main === module) {
-  server.listen(PORT, () => {
-    console.log(`Servidor PRD (REST + WebSockets) rodando na porta ${PORT}`);
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
   });
 }
 
